@@ -9,7 +9,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.Graphics;
 import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.Color;
@@ -23,13 +22,14 @@ public class JavaAlarmClock extends JPanel
     private int hour;
     private int minute;
     private int second;
-    private BufferedImage offscreenImage;
-    private Graphics2D offscreenGraphics;
+    private BufferedImage offscreenImage, clockFaceImage;
+    private Graphics2D offscreenGraphics, clockFaceGraphics;
+    private int clockFaceEdge = 0;
 
 
     JavaAlarmClock(){
-    Timer timer = new Timer();
-    timer.scheduleAtFixedRate(new TimerTask() {
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 Calendar calendar = Calendar.getInstance();
@@ -48,22 +48,28 @@ public class JavaAlarmClock extends JPanel
         if (offscreenImage == null || offscreenImage.getWidth() != getWidth() || offscreenImage.getHeight() != getHeight()) {
             offscreenImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
             offscreenGraphics = offscreenImage.createGraphics();
+            clockFaceEdge = Math.min(getWidth(), getHeight());
+            clockFaceImage = new BufferedImage(clockFaceEdge, clockFaceEdge, BufferedImage.TYPE_INT_ARGB);
+            clockFaceGraphics = clockFaceImage.createGraphics();
         }
 
-        // TODO: Make the root window black using double buffering.
+        // Make the root window black using double buffering.
         offscreenGraphics.setColor(Color.BLACK);
         offscreenGraphics.fillRect(0, 0, getWidth(), getHeight());
 
         // TODO: Center clockface in root JFrame
+        int clockFaceRight = (getWidth() - clockFaceEdge)/2;
+        int clockFaceTop = (getHeight() - clockFaceEdge)/2;
 
         // Draw the offscreen image to the screen
-        drawClockFace(offscreenGraphics);
+        drawClockFace(clockFaceGraphics);
+        offscreenGraphics.drawImage(clockFaceImage, clockFaceRight, clockFaceTop, this);
         g.drawImage(offscreenImage, 0, 0, this);
     }
+
     private void drawClockFace(Graphics g) {
-        int minEdge = Math.min(getWidth(), getHeight());
-        int width = minEdge;
-        int height = minEdge;
+        int width = clockFaceEdge;
+        int height = clockFaceEdge;
 
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, width, height);
@@ -123,7 +129,7 @@ public class JavaAlarmClock extends JPanel
             int endY = (int) (centerY - outerRadius * Math.cos(angle));
             g.drawLine(startX, startY, endX, endY);
         }
-}
+    }
 
     public static void main( String[] args )
     {
