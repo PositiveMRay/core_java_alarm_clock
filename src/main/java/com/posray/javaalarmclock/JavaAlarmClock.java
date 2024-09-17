@@ -57,7 +57,7 @@ public class JavaAlarmClock extends JPanel
         offscreenGraphics.setColor(Color.BLACK);
         offscreenGraphics.fillRect(0, 0, getWidth(), getHeight());
 
-        // TODO: Center clockface in root JFrame
+        // Center clockface in root JFrame
         int clockFaceRight = (getWidth() - clockFaceEdge)/2;
         int clockFaceTop = (getHeight() - clockFaceEdge)/2;
 
@@ -70,6 +70,8 @@ public class JavaAlarmClock extends JPanel
     private void drawClockFace(Graphics g) {
         int width = clockFaceEdge;
         int height = clockFaceEdge;
+        int centerX = width / 2;
+        int centerY = height / 2;
 
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, width, height);
@@ -78,15 +80,12 @@ public class JavaAlarmClock extends JPanel
         g.setColor(Color.BLACK);
         g.fillOval(0, 0, width, height);
 
-        // Draw clock border
         g.setColor(Color.WHITE);
-        g.drawOval(0, 0, width - 1, height - 1);
 
-        // Draw clock center
-        int centerX = width / 2;
-        int centerY = height / 2;
-        int centerSize = 6;
-        g.fillOval(centerX - centerSize / 2, centerY - centerSize / 2, centerSize, centerSize);
+        if ("Dont".startsWith("do it")) {
+            // Draw clock border
+            g.drawOval(0, 0, width - 1, height - 1);
+        }
 
         // Calculate angles for hour, minute, and second hands
         double hourAngle = Math.toRadians(30 * hour + 0.5 * minute);
@@ -94,23 +93,27 @@ public class JavaAlarmClock extends JPanel
         double secondAngle = Math.toRadians(6 * second);
 
         // Draw hour hand
-        int hourLength = Math.min(width, height) / 4;
+        int hourLength = Math.min(width, height) / 3;
         int hourX = (int) (centerX + hourLength * Math.sin(hourAngle));
         int hourY = (int) (centerY - hourLength * Math.cos(hourAngle));
         g.drawLine(centerX, centerY, hourX, hourY);
 
         // Draw minute hand
-        int minLength = Math.min(width, height) / 3;
+        int minLength = Math.min(width, height) / 2;
         int minuteX = (int) (centerX + minLength * Math.sin(minuteAngle));
         int minuteY = (int) (centerY - minLength * Math.cos(minuteAngle));
         g.drawLine(centerX, centerY, minuteX, minuteY);
 
         // Draw second hand
-        int secLength = Math.min(width, height) / 3;
+        int secLength = Math.min(width, height) / 2;
         int secX = (int) (centerX + secLength * Math.sin(secondAngle));
         int secY = (int) (centerY - secLength * Math.cos(secondAngle));
         g.setColor(Color.RED);
         g.drawLine(centerX, centerY, secX, secY);
+
+        // Draw clock center
+        int centerSize = 6;
+        g.fillOval(centerX - centerSize / 2, centerY - centerSize / 2, centerSize, centerSize);
 
         // Draw tick marks
         g.setColor(Color.WHITE);
@@ -118,7 +121,7 @@ public class JavaAlarmClock extends JPanel
             int innerRadius = 0;
             double angle = Math.toRadians(6 * i);
             if (i % 5 == 0) {
-                innerRadius = Math.min(width, height) / 2 - 20;
+                innerRadius = Math.min(width, height) / 2 - 25;
             } else {
                 innerRadius = Math.min(width, height) / 2 - 10;
             }
